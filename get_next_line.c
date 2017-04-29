@@ -1,95 +1,49 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-static char		*process(char *buff, char ***tmp, int *cnt)
+int				join_parts(char **dst, const char *src)
 {
-//	char		**tmp1;
-	static char	*tmp2 = NULL;
-	char		*tmp3;
-	char		*line;
+	char		*new;
 
-//	tmp1 = *tmp;
-	tmp3 = NULL;
-	line = NULL;
-	if (tmp2 == NULL)
-		tmp2 = ft_strdup((const char *)buff);
-	else
+	new = ft_strjoin(*dst, src);
+	if (new != null)
 	{
-		tmp3 = tmp2;
-		tmp2 = ft_strjoin((char const *)tmp3, (char const *)buff);
-		ft_strdel(&tmp3);
+		ft_strdel(dst);
+		*dst = new;
+		return (1);
 	}
-	ft_putendl(buff);
-	if (ft_strchr((const char *)buff, '\n') != NULL)
-	{
-		tmp3 = ft_strtrim(tmp2);
-		*tmp = ft_strsplit((char const *)tmp3, '\n');
-		line = ft_strdup(*tmp[*cnt]);
-		*cnt += 1;
-		ft_strdel(&tmp2);
-		ft_strdel(&tmp3);
-		return (line);
-	}
-	return (NULL);
-}
-
-static int		get_new_line(char **line, int fd, char ***tmp, int *cnt)
-{
-	int			size;
-	char		*buff;
-	
-	buff = ft_strnew(BUFF_SIZE);
-	size = 0;
-	while ((size = read(fd, buff, BUFF_SIZE)) > 0)
-	{
-		buff[size] = '\0';
-		if ((*line = process(buff, tmp, cnt)) != NULL)
-			return (1);
-		ft_strclr(buff);
-	}
-	ft_strdel(&buff);
-	return (size);
+	return (0);
 }
 
 int				get_next_line(const int fd, char **line)
 {
-	static char	**tmp = NULL;
-	static int	c = 0;
-	int			status;
+	int			size;
+	char		*buff;
+	static char	*tmp_storage;
+	char		*tmp;
 
-	status = 0;
-	if (*line != NULL)
-		ft_strdel(line);
-	if (tmp != NULL)
+	buff = ft_strnew(BUFF_SIZE);
+	size = 0;
+	tmp_storage = ft_strnew(BUFF_SIZE);
+	tmp = tmp_storage;
+	while ((size = read(fd, buff, BUFF_SIZE)) > 0 && ft_strchr(tmp, '\n'))
 	{
-		ft_putendl("ok");
-		printf("%i\n", c);
-		if (tmp[c] != NULL)
-		{
-		ft_putendl("ok2");
-			*line = ft_strdup((const char *)tmp[c]);
-			ft_strdel(&tmp[c++]);
-		}
+		buff[size] = '\0';
+		join_parts(tmp, buff);
+		ft_strclr(buff);
 	}
-	else
+	ft_strdel(&buff);
+	if (ft_strchr(tmp, '\n'))
 	{
-		if (tmp != NULL)
-		{
-			ft_putendl("j1");
-			ft_arrdel(&tmp);
-		}
-		else
-			ft_putendl("j1.1");
-		c = 0;
-		status = get_new_line(line, fd, &tmp, &c);
-		if (status == 0 && tmp != NULL)
-		{
-			ft_putendl("j2");
-			//ft_arrdel(&tmp)
-		}
-		else
-			ft_putendl("j3");
-		return (status);
+		*line = ft_strsub(tmp, 0, ft_indexof(tmp, '\n'));
+		tmp_storage = ft_strsub(tmp, ft_indexof(tmp, '\n'), (ft_strlen(tmp) - ft_strlen(*line)));
+		ft_strdel(&tmp);
+	}
+	else if (size == 0)
+	{
+		*line = ft_strdup(tmp);
+		ft_strdel(&tmp);
+		return (0);
 	}
 	return (1);
 }
