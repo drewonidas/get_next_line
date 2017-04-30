@@ -1,4 +1,5 @@
 #include "get_next_line.h"
+#include <string.h>
 #include <stdio.h>
 
 int				join_parts(char **dst, const char *src)
@@ -6,7 +7,7 @@ int				join_parts(char **dst, const char *src)
 	char		*new;
 
 	new = ft_strjoin(*dst, src);
-	if (new != null)
+	if (new != NULL)
 	{
 		ft_strdel(dst);
 		*dst = new;
@@ -23,27 +24,40 @@ int				get_next_line(const int fd, char **line)
 	char		*tmp;
 
 	buff = ft_strnew(BUFF_SIZE);
-	size = 0;
+	size = 1;
 	tmp_storage = ft_strnew(BUFF_SIZE);
 	tmp = tmp_storage;
-	while ((size = read(fd, buff, BUFF_SIZE)) > 0 && ft_strchr(tmp, '\n'))
+	while (size > 0 && ft_strchr(tmp, '\n') == NULL)
 	{
+		size = read(fd, buff, BUFF_SIZE);
 		buff[size] = '\0';
-		join_parts(tmp, buff);
+		if (join_parts(&tmp, buff))
+			{;}
 		ft_strclr(buff);
 	}
 	ft_strdel(&buff);
 	if (ft_strchr(tmp, '\n'))
 	{
+		//printf("==========\n%i==========\n", ft_indexof(tmp, '\n'));
 		*line = ft_strsub(tmp, 0, ft_indexof(tmp, '\n'));
 		tmp_storage = ft_strsub(tmp, ft_indexof(tmp, '\n'), (ft_strlen(tmp) - ft_strlen(*line)));
+		ft_putendl(tmp_storage);
 		ft_strdel(&tmp);
 	}
-	else if (size == 0)
+	else if (size <= 0)
 	{
 		*line = ft_strdup(tmp);
 		ft_strdel(&tmp);
 		return (0);
+	}
+	else if (size < 1)
+	{
+		if (tmp != NULL)
+		{
+			*line  =  ft_strdup(tmp);
+			ft_strdel(&tmp);
+		}
+		return (-1);
 	}
 	return (1);
 }

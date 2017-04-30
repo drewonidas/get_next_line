@@ -21,7 +21,9 @@ OPTS = -Wall -Wextra -Werror
 LIB = ../libft/
 
 $(NAME):
-	@gcc -o $(NAME) $(SRC) $(OPTS) -I../libft/includes/ -L../libft/
+	@make -C ../libft/
+	@gcc -c $(SRC) $(OPTS) -I../libft/includes/ 
+	@gcc -o $(NAME) $(OBJ) ../libft/libft.a
 	@clear
 	@echo "---==== test built ====---"
 

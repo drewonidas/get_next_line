@@ -23,9 +23,15 @@ int		main(int c, char **v)
 	if (c > 1)
 	{
 		fd = open(v[1], O_RDONLY);
+		//int n = -1;
 		while (get_next_line((const int)fd, &line) > 0)
-			ft_putendl(line);
-		ft_strdel(&line);
+		{
+			//ft_putendl(line);
+			//ft_strdel(&line);
+			//n++;
+			//if (n == 3)
+			//	break;
+		}
 //		get_next_line((const int)fd, &line);
 //		ft_putendl(line);
 	}
