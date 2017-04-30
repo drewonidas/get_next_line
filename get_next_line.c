@@ -38,9 +38,9 @@ int				get_next_line(const int fd, char **line)
 	ft_strdel(&buff);
 	if (ft_strchr(tmp, '\n'))
 	{
-		//printf("==========\n%i==========\n", ft_indexof(tmp, '\n'));
 		*line = ft_strsub(tmp, 0, ft_indexof(tmp, '\n'));
 		tmp_storage = ft_strsub(tmp, ft_indexof(tmp, '\n'), (ft_strlen(tmp) - ft_strlen(*line)));
+			printf("==========\n%i\n%s\n==========\n", ft_indexof(tmp, '\n'), tmp_storage);
 		ft_putendl(tmp_storage);
 		ft_strdel(&tmp);
 	}
