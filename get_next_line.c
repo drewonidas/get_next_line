@@ -29,19 +29,21 @@ int				get_next_line(const int fd, char **line)
 	tmp = tmp_storage;
 	while (size > 0 && ft_strchr(tmp, '\n') == NULL)
 	{
+		ft_putendl(tmp);
 		size = read(fd, buff, BUFF_SIZE);
 		buff[size] = '\0';
 		if (join_parts(&tmp, buff))
 			{;}
 		ft_strclr(buff);
+		ft_putendl(tmp);
+		ft_putendl("+++++++++");
 	}
 	ft_strdel(&buff);
 	if (ft_strchr(tmp, '\n'))
 	{
 		*line = ft_strsub(tmp, 0, ft_indexof(tmp, '\n'));
 		tmp_storage = ft_strsub(tmp, ft_indexof(tmp, '\n'), (ft_strlen(tmp) - ft_strlen(*line)));
-			printf("==========\n%i\n%s\n==========\n", ft_indexof(tmp, '\n'), tmp_storage);
-		ft_putendl(tmp_storage);
+		//printf("==========\n%i\n%s\n==========\n", (int)(ft_strlen(tmp_storage) - ft_strlen(*line)), tmp_storage);
 		ft_strdel(&tmp);
 	}
 	else if (size <= 0)
